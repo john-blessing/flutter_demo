@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_demo/self_bottom_navigation_bar.dart';
 
 void main() => runApp(MyApp());
 
@@ -7,11 +9,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: '火影忍者',
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        primarySwatch: Colors.yellow,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: '火影忍者'),
     );
   }
 }
@@ -28,17 +30,20 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  int _selectedIndex = 1;
-  final _widgetOptions = [
-    Text('Index 0: Home'),
-    Text('Index 1: Business'),
-    Text('Index 2: School'),
-  ];
+  int num = 1;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(MyHomePage oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    print('===>enter');
   }
 
   void _onItemTapped(int index) {
@@ -49,61 +54,95 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final imgUrl = 'https://i.kfs.io/playlist/global/47130192v1/fit/500x500.jpg';
 
+  Widget _card() {
+    return Card(
+      elevation: 4,
+      margin: EdgeInsets.all(10.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          Image.network(imgUrl),
+          Padding(
+            padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Happy Team',
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Smile',
+                style: TextStyle(fontSize: 16.0, color: Colors.grey),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  void _setList() {
+    setState(() {
+      num += 1;
+    });
+  }
+
+  Widget _renderContainer(int _selectedIndex) {
+    switch (_selectedIndex) {
+      case 0:
+        return ListView.builder(
+        itemCount: num,
+        itemBuilder: (BuildContext context, int index) {
+          return _card();
+        });
+      case 1:
+        return Text('Picture');
+      case 2:
+        return Text('School');
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Align(
-          child: Text(widget.title),
+          child: Row(
+            children: <Widget>[
+              Text(widget.title),
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  _setList();
+                },
+              )
+            ],
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
           alignment: Alignment.centerLeft,
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          Center(
-              child: Card(
-            elevation: 4,
-            margin: EdgeInsets.all(10.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Image.network(imgUrl),
-                Padding(
-                  padding: EdgeInsets.only(top: 10, left: 10, right: 10),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Code Formatting While Saving the File:',
-                      style: TextStyle(fontSize: 18.0),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 20),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Visual Studio code allows user can customize the default settings.',
-                      style: TextStyle(fontSize: 16.0, color: Colors.grey),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ))
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
+      body: _renderContainer(_selectedIndex),
+      bottomNavigationBar: SelfBottomNavigationBar(
+        type: SelfBottomNavigationBarType.fixed,
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('首页')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.business), title: Text('Business')),
+              icon: Icon(Icons.bookmark), title: Text('关注')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.school), title: Text('School')),
+              icon: Icon(Icons.message), title: Text('消息')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person), title: Text('我的')),
         ],
         currentIndex: _selectedIndex,
-        fixedColor: Colors.deepPurple,
+        fixedColor: Colors.orangeAccent,
         onTap: _onItemTapped,
       ),
     );
