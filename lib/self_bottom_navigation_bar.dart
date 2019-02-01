@@ -148,16 +148,19 @@ class SelfBottomNavigationBar extends StatefulWidget {
     SelfBottomNavigationBarType type,
     this.fixedColor,
     this.iconSize = 24.0,
-  }) : assert(items != null),
-       assert(items.length >= 2),
-       assert(
-        items.every((BottomNavigationBarItem item) => item.title != null) == true,
-        'Every item must have a non-null title',
-       ),
-       assert(0 <= currentIndex && currentIndex < items.length),
-       assert(iconSize != null),
-       type = type ?? (items.length <= 3 ? SelfBottomNavigationBarType.fixed : SelfBottomNavigationBarType.shifting),
-       super(key: key);
+  })  : assert(items != null),
+        assert(items.length >= 2),
+        assert(
+            items.every((BottomNavigationBarItem item) => item.title != null) ==
+                true,
+            'Every item must have a non-null title',),
+        assert(0 <= currentIndex && currentIndex < items.length),
+        assert(iconSize != null),
+        type = type ??
+            (items.length <= 3
+                ? SelfBottomNavigationBarType.fixed
+                : SelfBottomNavigationBarType.shifting),
+        super(key: key);
 
   /// The interactive items laid out within the bottom navigation bar where each item has an icon and title.
   final List<BottomNavigationBarItem> items;
@@ -192,7 +195,8 @@ class SelfBottomNavigationBar extends StatefulWidget {
   final double iconSize;
 
   @override
-  _SelfBottomNavigationBarState createState() => _SelfBottomNavigationBarState();
+  _SelfBottomNavigationBarState createState() =>
+      _SelfBottomNavigationBarState();
 }
 
 // This represents a single tile in the bottom navigation bar. It is intended
@@ -363,25 +367,28 @@ class _BottomNavigationTile extends StatelessWidget {
   }
 }
 
-class _SelfBottomNavigationBarState extends State<SelfBottomNavigationBar> with TickerProviderStateMixin {
+class _SelfBottomNavigationBarState extends State<SelfBottomNavigationBar>
+    with TickerProviderStateMixin {
   List<AnimationController> _controllers = <AnimationController>[];
   List<CurvedAnimation> _animations;
 
   Color _backgroundColor;
 
-  static final Animatable<double> _flexTween = Tween<double>(begin: 1.0, end: 1.5);
+  static final Animatable<double> _flexTween =
+      Tween<double>(begin: 1.0, end: 1.5);
 
   void _resetState() {
-    for (AnimationController controller in _controllers)
-      controller.dispose();
+    for (AnimationController controller in _controllers) controller.dispose();
 
-    _controllers = List<AnimationController>.generate(widget.items.length, (int index) {
+    _controllers =
+        List<AnimationController>.generate(widget.items.length, (int index) {
       return AnimationController(
         duration: kThemeAnimationDuration,
         vsync: this,
       )..addListener(_rebuild);
     });
-    _animations = List<CurvedAnimation>.generate(widget.items.length, (int index) {
+    _animations =
+        List<CurvedAnimation>.generate(widget.items.length, (int index) {
       return CurvedAnimation(
         parent: _controllers[index],
         curve: Curves.easeIn,
@@ -407,12 +414,12 @@ class _SelfBottomNavigationBarState extends State<SelfBottomNavigationBar> with 
 
   @override
   void dispose() {
-    for (AnimationController controller in _controllers)
-      controller.dispose();
+    for (AnimationController controller in _controllers) controller.dispose();
     super.dispose();
   }
 
-  double _evaluateFlex(Animation<double> animation) => _flexTween.evaluate(animation);
+  double _evaluateFlex(Animation<double> animation) =>
+      _flexTween.evaluate(animation);
 
   @override
   void didUpdateWidget(SelfBottomNavigationBar oldWidget) {
@@ -441,7 +448,8 @@ class _SelfBottomNavigationBarState extends State<SelfBottomNavigationBar> with 
   }
 
   List<Widget> _createTiles() {
-    final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+    final MaterialLocalizations localizations =
+        MaterialLocalizations.of(context);
     assert(localizations != null);
     final List<Widget> children = <Widget>[];
     switch (widget.type) {
@@ -469,12 +477,12 @@ class _SelfBottomNavigationBarState extends State<SelfBottomNavigationBar> with 
               _animations[i],
               widget.iconSize,
               onTap: () {
-                if (widget.onTap != null)
-                  widget.onTap(i);
+                if (widget.onTap != null) widget.onTap(i);
               },
               colorTween: colorTween,
               selected: i == widget.currentIndex,
-              indexLabel: localizations.tabLabel(tabIndex: i + 1, tabCount: widget.items.length),
+              indexLabel: localizations.tabLabel(
+                  tabIndex: i + 1, tabCount: widget.items.length),
             ),
           );
         }
@@ -488,12 +496,12 @@ class _SelfBottomNavigationBarState extends State<SelfBottomNavigationBar> with 
               _animations[i],
               widget.iconSize,
               onTap: () {
-                if (widget.onTap != null)
-                  widget.onTap(i);
+                if (widget.onTap != null) widget.onTap(i);
               },
               flex: _evaluateFlex(_animations[i]),
               selected: i == widget.currentIndex,
-              indexLabel: localizations.tabLabel(tabIndex: i + 1, tabCount: widget.items.length),
+              indexLabel: localizations.tabLabel(
+                  tabIndex: i + 1, tabCount: widget.items.length),
             ),
           );
         }
@@ -518,7 +526,8 @@ class _SelfBottomNavigationBarState extends State<SelfBottomNavigationBar> with 
     assert(debugCheckHasMaterialLocalizations(context));
 
     // Labels apply up to _bottomMargin padding. Remainder is media padding.
-    final double additionalBottomPadding = math.max(MediaQuery.of(context).padding.bottom - _kBottomMargin, 0.0);
+    final double additionalBottomPadding =
+        math.max(MediaQuery.of(context).padding.bottom - _kBottomMargin, 0.0);
     Color backgroundColor;
     switch (widget.type) {
       case SelfBottomNavigationBarType.fixed:
@@ -533,16 +542,20 @@ class _SelfBottomNavigationBarState extends State<SelfBottomNavigationBar> with 
       child: Stack(
         children: <Widget>[
           Positioned.fill(
-            child: Material( // Casts shadow.
+            child: Material(
+              // Casts shadow.
               elevation: 8.0,
               color: backgroundColor,
             ),
           ),
           ConstrainedBox(
-            constraints: BoxConstraints(minHeight: kBottomNavigationBarHeight + additionalBottomPadding),
+            constraints: BoxConstraints(
+                minHeight:
+                    kBottomNavigationBarHeight + additionalBottomPadding),
             child: Stack(
               children: <Widget>[
-                Material( // Splashes.
+                Material(
+                  // Splashes.
                   type: MaterialType.transparency,
                   child: Padding(
                     padding: EdgeInsets.only(bottom: additionalBottomPadding),
@@ -561,5 +574,3 @@ class _SelfBottomNavigationBarState extends State<SelfBottomNavigationBar> with 
     );
   }
 }
-
-

@@ -1,19 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_demo/self_bottom_navigation_bar.dart';
+import 'package:flutter_demo/cameraManager.dart';
 
-void main() => runApp(MyApp());
+import 'package:camera/camera.dart';
+
+List<CameraDescription> cameras;
+
+void logError(String code, String message) =>
+    print('Error: $code\nError Message: $message');
+
+Future<void> main() async {
+  try {
+    cameras = await availableCameras();
+  } on CameraException catch (e) {
+    logError(e.code, e.description);
+  }
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '火影忍者',
+      title: '灵感助手',
       theme: ThemeData(
         primarySwatch: Colors.yellow,
       ),
-      home: MyHomePage(title: '火影忍者'),
+      routes: {
+        '/cameraapp': (BuildContext bc) => CameraExampleHome(cameras: cameras)
+      },
+      home: MyHomePage(title: '灵感助手'),
     );
   }
 }
@@ -43,7 +62,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void didUpdateWidget(MyHomePage oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
-    print('===>enter');
   }
 
   void _onItemTapped(int index) {
@@ -97,17 +115,17 @@ class _MyHomePageState extends State<MyHomePage> {
     switch (_selectedIndex) {
       case 0:
         return ListView.builder(
-        itemCount: num,
-        itemBuilder: (BuildContext context, int index) {
-          return _card();
-        });
+            itemCount: num,
+            itemBuilder: (BuildContext context, int index) {
+              return _card();
+            });
       case 1:
         return Text('Picture');
       case 2:
         return Text('School');
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,9 +135,9 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               Text(widget.title),
               IconButton(
-                icon: Icon(Icons.add),
+                icon: Icon(Icons.camera),
                 onPressed: () {
-                  _setList();
+                  Navigator.pushNamed(context, '/cameraapp');
                 },
               )
             ],
@@ -136,10 +154,8 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('首页')),
           BottomNavigationBarItem(
               icon: Icon(Icons.bookmark), title: Text('关注')),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.message), title: Text('消息')),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person), title: Text('我的')),
+          BottomNavigationBarItem(icon: Icon(Icons.message), title: Text('消息')),
+          BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('我的')),
         ],
         currentIndex: _selectedIndex,
         fixedColor: Colors.orangeAccent,
