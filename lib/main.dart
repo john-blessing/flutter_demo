@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_demo/self_bottom_navigation_bar.dart';
 import 'package:flutter_demo/cameraManager.dart';
+import 'package:flutter_demo/imagePickerService.dart';
 
 import 'package:camera/camera.dart';
 
@@ -29,8 +30,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.yellow,
       ),
+      debugShowCheckedModeBanner: false,
       routes: {
-        '/cameraapp': (BuildContext bc) => CameraExampleHome(cameras: cameras)
+        '/cameraapp': (BuildContext bc) => CameraExampleHome(cameras: cameras),
+        '/imagePicker': (BuildContext bc) => ImagePickerService()
       },
       home: MyHomePage(title: '灵感助手'),
     );
@@ -48,19 +51,53 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-
+  ScrollController _scrollController = new ScrollController();
   int num = 1;
-
+  bool isPerformingRequest = false;
   int _selectedIndex = 0;
+
+  final cardList = [
+    {'imgUrl': 'http://192.168.0.105:8000/2189146230.png'},
+    {'imgUrl': 'http://192.168.0.105:8000/2189148728.png'},
+    {'imgUrl': 'http://192.168.0.105:8000/2189162758.png'}
+  ];
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _getMoreData();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> fakeRequest() async {
+    return Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        cardList.add({'imgUrl': 'http://192.168.0.105:8000/2189162758.png'});
+        isPerformingRequest = false;
+      });
+    });
+  }
+
+  _getMoreData() async {
+    if (!isPerformingRequest) {
+      setState(() => isPerformingRequest = true);
+      await fakeRequest();
+    }
   }
 
   @override
   void didUpdateWidget(MyHomePage oldWidget) {
-    // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
   }
 
@@ -70,11 +107,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  final imgUrl = 'https://i.kfs.io/playlist/global/47130192v1/fit/500x500.jpg';
+  Widget _buildProgressIndicator() {
+    return new Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: new Center(
+        child: new Opacity(
+          opacity: isPerformingRequest ? 1.0 : 0.0,
+          child: new CircularProgressIndicator(),
+        ),
+      ),
+    );
+  }
 
-  Widget _card() {
+  Widget _card(String imgUrl) {
     return Card(
-      elevation: 4,
+      elevation: 8,
       margin: EdgeInsets.all(10.0),
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -105,24 +152,86 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _setList() {
-    setState(() {
-      num += 1;
-    });
-  }
-
   Widget _renderContainer(int _selectedIndex) {
     switch (_selectedIndex) {
       case 0:
-        return ListView.builder(
-            itemCount: num,
-            itemBuilder: (BuildContext context, int index) {
-              return _card();
-            });
+        return Container(
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(241, 243, 244, 1),
+              border: Border(
+                  bottom: BorderSide(
+                      width: 1.0, color: Color.fromRGBO(0, 0, 0, 0.1))),
+            ),
+            child: ListView.builder(
+                controller: _scrollController,
+                itemCount: cardList?.length,
+                itemBuilder: (BuildContext context, int index) {
+                  print('$index:${cardList.length}');
+                  if (index == cardList.length - 1) {
+                    return _buildProgressIndicator();
+                  } else {
+                    return _card(cardList[index]['imgUrl']);
+                  }
+                }));
       case 1:
         return Text('Picture');
       case 2:
         return Text('School');
+      case 3:
+        return Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(241, 243, 244, 1),
+              border: Border(
+                  bottom: BorderSide(
+                      width: 1.0, color: Color.fromRGBO(0, 0, 0, 0.1))),
+            ),
+            child: ListView(
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.only(top: 20),
+                  padding: const EdgeInsets.only(left: 20),
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      bottom: BorderSide(
+                          width: 1.0, color: Color.fromRGBO(0, 0, 0, 0.1)),
+                      top: BorderSide(
+                          width: 1.0, color: Color.fromRGBO(0, 0, 0, 0.1)),
+                    ),
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: <Widget>[
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              'http://p0.ifengimg.com/pmop/2018/0724/2BEA391D6F6C6FBD0FF1EA04852FE1A3DB809AC4_size8_w402_h363.jpeg'),
+                        ),
+                        Padding(
+                          child: Text(
+                            'Jhon',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          padding: const EdgeInsets.only(left: 10),
+                        ),
+                        Expanded(
+                            child: Align(
+                          child: Icon(
+                            Icons.chevron_right,
+                            size: 30,
+                            color: Colors.grey,
+                          ),
+                          alignment: Alignment.centerRight,
+                        ))
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ));
     }
   }
 
@@ -135,9 +244,9 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               Text(widget.title),
               IconButton(
-                icon: Icon(Icons.camera),
+                icon: Icon(Icons.camera_alt),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/cameraapp');
+                  Navigator.pushNamed(context, '/imagePicker');
                 },
               )
             ],
@@ -158,7 +267,7 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('我的')),
         ],
         currentIndex: _selectedIndex,
-        fixedColor: Colors.orangeAccent,
+        fixedColor: Colors.yellow,
         onTap: _onItemTapped,
       ),
     );

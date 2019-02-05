@@ -22,7 +22,8 @@ dependencies:
   camera:
   path_provider:
   video_player:
-        
+  image_picker:
+    
 dev_dependencies:
   flutter_test:
     sdk: flutter
