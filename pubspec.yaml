@@ -23,7 +23,7 @@ dependencies:
   path_provider:
   video_player:
   image_picker:
-    
+  dio:
 dev_dependencies:
   flutter_test:
     sdk: flutter

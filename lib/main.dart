@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '灵感助手',
       theme: ThemeData(
-        primarySwatch: Colors.yellow,
+        primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
       routes: {
@@ -57,9 +57,9 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
   final cardList = [
-    {'imgUrl': 'http://192.168.0.105:8000/2189146230.png'},
-    {'imgUrl': 'http://192.168.0.105:8000/2189148728.png'},
-    {'imgUrl': 'http://192.168.0.105:8000/2189162758.png'}
+    {'imgUrl': 'http://192.168.7.50:8999/hyrz/2189146230.png'},
+    {'imgUrl': 'http://192.168.7.50:8999/hyrz/2189148728.png'},
+    {'imgUrl': 'http://192.168.7.50:8999/hyrz/2189162758.png'}
   ];
 
   @override
@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> fakeRequest() async {
     return Future.delayed(Duration(seconds: 2), () {
       setState(() {
-        cardList.add({'imgUrl': 'http://192.168.0.105:8000/2189162758.png'});
+        cardList.add({'imgUrl': 'http://192.168.7.50:8999/hyrz/2189162758.png'});
         isPerformingRequest = false;
       });
     });
@@ -239,6 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: Align(
           child: Row(
             children: <Widget>[
@@ -267,7 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('我的')),
         ],
         currentIndex: _selectedIndex,
-        fixedColor: Colors.yellow,
+        fixedColor: Colors.blue,
         onTap: _onItemTapped,
       ),
     );
