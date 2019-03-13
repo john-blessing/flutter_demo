@@ -174,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                 }));
       case 1:
-        return Text('Picture');
+        return Container(child: ,);
       case 2:
         return Text('School');
       case 3:
