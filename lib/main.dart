@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_demo/self_bottom_navigation_bar.dart';
 import 'package:flutter_demo/cameraManager.dart';
 import 'package:flutter_demo/imagePickerService.dart';
+import 'mine.dart';
 
 import 'package:camera/camera.dart';
 
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         '/cameraapp': (BuildContext bc) => CameraExampleHome(cameras: cameras),
-        '/imagePicker': (BuildContext bc) => ImagePickerService()
+        '/imagePicker': (BuildContext bc) => ImagePickerService(),
+        '/mine': (BuildContext bc) => Mine()
       },
       home: MyHomePage(title: '灵感助手'),
     );
@@ -52,14 +54,24 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   ScrollController _scrollController = new ScrollController();
+  TextEditingController _controller = new TextEditingController();
   int num = 1;
   bool isPerformingRequest = false;
   int _selectedIndex = 0;
 
   final cardList = [
-    {'imgUrl': 'http://192.168.7.50:8999/hyrz/2189146230.png'},
-    {'imgUrl': 'http://192.168.7.50:8999/hyrz/2189148728.png'},
-    {'imgUrl': 'http://192.168.7.50:8999/hyrz/2189162758.png'}
+    {
+      'imgUrl':
+          'https://life.tw/upload_file/14/content/428f8ee1-54bb-daa0-ca9e-da252b96314e.jpg'
+    },
+    {
+      'imgUrl':
+          'https://i0.wp.com/static.cnbetacdn.com/thumb/article/2019/0321/bef360485e10aca.jpg?zoom=2.625&w=584&ssl=1'
+    },
+    {
+      'imgUrl':
+          'http://upload.wikimedia.org/wikipedia/zh/b/b2/%E5%92%92%E5%8D%B0%E5%8D%83%E9%B8%9F.jpg'
+    }
   ];
 
   @override
@@ -83,7 +95,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> fakeRequest() async {
     return Future.delayed(Duration(seconds: 2), () {
       setState(() {
-        cardList.add({'imgUrl': 'http://192.168.7.50:8999/hyrz/2189162758.png'});
+        cardList.add({
+          'imgUrl':
+              'https://life.tw/upload_file/14/content/428f8ee1-54bb-daa0-ca9e-da252b96314e.jpg'
+        });
         isPerformingRequest = false;
       });
     });
@@ -102,9 +117,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    print(index);
+    if (index == 1) {
+      Navigator.pushNamed(context, '/mine');
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   Widget _buildProgressIndicator() {
@@ -174,9 +194,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                 }));
       case 1:
-        return Container(child: ,);
+        break;
       case 2:
-        return Text('School');
+        return Padding(
+          padding: EdgeInsets.all(8.0),
+          child:TextField(
+          obscureText: true,
+          controller: _controller,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Password',
+          ),
+        ));
       case 3:
         return Container(
             height: double.infinity,

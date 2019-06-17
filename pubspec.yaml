@@ -24,6 +24,7 @@ dependencies:
   video_player:
   image_picker:
   dio:
+  font_awesome_flutter:
 dev_dependencies:
   flutter_test:
     sdk: flutter
